@@ -1,7 +1,7 @@
 {
-  "name": "turbine",
+  "name": "tailwindcss-turbine",
   "version": "0.0.1",
-  "description": "Turbine is the original and ultimate Tailwind CSS config preprocessor, enabling the development and usage of plugins that effortlessly reach outside your `plugins` array with minimal effort.",
+  "description": "Tailwindcss-turbine is the original and ultimate Tailwind CSS config preprocessor, enabling the development and usage of plugins that effortlessly reach outside your `plugins` array with minimal effort.",
   "type": "module",
   "source": "index.ts",
   "exports": {
@@ -23,7 +23,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/brandonmcconnell/turbine.git"
+    "url": "git+https://github.com/brandonmcconnell/tailwindcss-turbine.git"
   },
   "keywords": [
     "css",
@@ -37,9 +37,9 @@
   "author": "Brandon McConnell",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/brandonmcconnell/turbine/issues"
+    "url": "https://github.com/brandonmcconnell/tailwindcss-turbine/issues"
   },
-  "homepage": "https://github.com/brandonmcconnell/turbine#readme",
+  "homepage": "https://github.com/brandonmcconnell/tailwindcss-turbine#readme",
   "dependencies": {
     "@types/node": "^20.4.1"
   },
