@@ -1,4 +1,4 @@
-import { type Config } from 'tailwindcss';
+import type { Config } from 'tailwindcss';
 import tailwindPlugin from 'tailwindcss/plugin.js';
 
 // Plugin Types
@@ -8,7 +8,7 @@ type TurbinePluginBase = {
   transform?: (config: Partial<Config>) => Partial<Config>;
   plugins?: TailwindPlugin[];
 };
-export type TurbinePlugin = TurbinePluginBase | (<T = unknown>(...params: T[]) => TurbinePluginBase);
+export type TurbinePlugin = TurbinePluginBase | (<T = any>(...params: T[]) => TurbinePluginBase);
 type Plugin = TurbinePlugin | TailwindPlugin;
 
 // Tailwind Plugin Type Guard
