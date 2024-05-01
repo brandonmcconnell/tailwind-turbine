@@ -10,7 +10,7 @@ type TurbinePluginBase = {
   transform?: (config: Partial<Config>) => Partial<Config>;
   plugins?: TailwindPlugin[];
 };
-export type TurbinePlugin = TurbinePluginBase | (<T = unknown>(...params: T[]) => TurbinePluginBase);
+export type TurbinePlugin = TurbinePluginBase | ((...params: any[]) => TurbinePluginBase);
 type Plugin = TurbinePlugin | TailwindPlugin;
 
 // Tailwind Plugin Type Guard
