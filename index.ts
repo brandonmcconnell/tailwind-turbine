@@ -1,9 +1,11 @@
 import type { Config } from 'tailwindcss';
 import tailwindPlugin from 'tailwindcss/plugin.js';
 
+type PossiblyInvoked<T extends (...args: any[]) => any> = T | ReturnType<T>;
+
 // Plugin Types
 type TailwindPluginBase = typeof tailwindPlugin;
-type TailwindPlugin = ReturnType<TailwindPluginBase | TailwindPluginBase['withOptions']>;
+type TailwindPlugin = ReturnType<TailwindPluginBase> | PossiblyInvoked<ReturnType<TailwindPluginBase['withOptions']>>;
 type TurbinePluginBase = {
   transform?: (config: Partial<Config>) => Partial<Config>;
   plugins?: TailwindPlugin[];
