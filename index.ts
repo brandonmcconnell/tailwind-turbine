@@ -7,7 +7,7 @@ type PossiblyInvoked<T extends (...args: any[]) => any> = T | ReturnType<T>;
 type TailwindPluginBase = typeof tailwindPlugin;
 type TailwindPlugin = ReturnType<TailwindPluginBase> | PossiblyInvoked<ReturnType<TailwindPluginBase['withOptions']>>;
 type TurbinePluginBase = {
-  transform?: (config: Partial<Config>) => Partial<Config>;
+  transform?: (config: NormalizedConfig) => NormalizedConfig;
   plugins?: TailwindPlugin[];
 };
 export type TurbinePlugin = TurbinePluginBase | ((...params: any[]) => TurbinePluginBase);
@@ -33,13 +33,43 @@ function isTurbinePlugin(plugin: Plugin): plugin is TurbinePlugin {
   return false;
 }
 
+interface NormalizedConfig extends Config {
+  safelist: NonNullable<Config['safelist']>;
+  blocklist: NonNullable<Config['blocklist']>;
+  presets: NonNullable<Config['presets']>;
+  theme: NonNullable<Config['theme']> & {
+    extend: NonNullable<NonNullable<Config['theme']>['extend']>;
+  };
+  plugins: NonNullable<Config['plugins']>;
+}
+
+const normalizeConfig = (config: Config): NormalizedConfig => {
+  config.safelist ??= [] satisfies NormalizedConfig['safelist'];
+  config.blocklist ??= [] satisfies NormalizedConfig['blocklist'];
+  config.presets ??= [] satisfies NormalizedConfig['presets'];
+  config.theme ??= {
+    extend: {} satisfies NormalizedConfig['theme']['extend'],
+  } satisfies NormalizedConfig['theme'];
+  config.theme.extend ??= {} satisfies NormalizedConfig['theme']['extend'];
+  config.plugins ??= [] satisfies NormalizedConfig['plugins'];
+  return config as NormalizedConfig;
+};
+
 // Turbine Plugin Builder
 const Turbine = {
-  build({ config, plugins }: { config: Partial<Config>; plugins: Plugin[] }) {
+  build({
+    config: CONFIG_RAW,
+    plugins,
+    // reporting, // Coming soon 👀
+  }: {
+    config: Config;
+    plugins: Plugin[];
+    // reporting?: boolean;
+  }) {
     let i = 0;
+    let config = normalizeConfig(CONFIG_RAW);
     for (const plugin of plugins) {
       if (isTailwindPlugin(plugin)) {
-        config.plugins ??= [];
         config.plugins.push(plugin);
       } else if (isTurbinePlugin(plugin)) {
         const { transform, plugins } = typeof plugin === 'function' ? plugin() : plugin;
@@ -47,7 +77,6 @@ const Turbine = {
           config = transform(config);
         }
         if (plugins) {
-          config.plugins ??= [];
           config.plugins.push(...plugins);
         }
       } else {
@@ -55,7 +84,7 @@ const Turbine = {
       }
       i++;
     }
-    return config as Config;
+    return config as NormalizedConfig;
   },
 };
 
