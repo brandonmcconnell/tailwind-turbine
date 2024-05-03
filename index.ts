@@ -33,23 +33,46 @@ function isTurbinePlugin(plugin: Plugin): plugin is TurbinePlugin {
   return false;
 }
 
+type NonNullableTheme = NonNullable<Config['theme']>;
+interface NormalizedTheme extends NonNullableTheme {
+  // Responsiveness
+  supports: NonNullable<NonNullableTheme['supports']>;
+  data: NonNullable<NonNullableTheme['data']>;
+  // Reusable base configs
+  colors: NonNullable<NonNullableTheme['colors']>;
+  spacing: NonNullable<NonNullableTheme['spacing']>;
+  // Components
+  container: NonNullable<NonNullableTheme['container']>;
+}
+
 interface NormalizedConfig extends Config {
   safelist: NonNullable<Config['safelist']>;
   blocklist: NonNullable<Config['blocklist']>;
   presets: NonNullable<Config['presets']>;
-  theme: NonNullable<Config['theme']> & {
-    extend: NonNullable<NonNullable<Config['theme']>['extend']>;
-  };
+  theme: NormalizedTheme;
   plugins: NonNullable<Config['plugins']>;
 }
+
+const createNormalizedThemeObject = (): NormalizedTheme => ({
+  supports: {},
+  data: {},
+  colors: {},
+  spacing: {},
+  container: {},
+});
 
 const normalizeConfig = (config: Config): NormalizedConfig => {
   config.safelist ??= [] satisfies NormalizedConfig['safelist'];
   config.blocklist ??= [] satisfies NormalizedConfig['blocklist'];
   config.presets ??= [] satisfies NormalizedConfig['presets'];
-  config.theme ??= {
-    extend: {} satisfies NormalizedConfig['theme']['extend'],
-  } satisfies NormalizedConfig['theme'];
+  config.theme = {
+    ...createNormalizedThemeObject(),
+    ...(config.theme ?? {}),
+    extend: {
+      ...createNormalizedThemeObject(),
+      ...(config.theme?.extend ?? {}),
+    },
+  } satisfies NormalizedTheme & { extend: NormalizedTheme };
   config.theme.extend ??= {} satisfies NormalizedConfig['theme']['extend'];
   config.plugins ??= [] satisfies NormalizedConfig['plugins'];
   return config as NormalizedConfig;
