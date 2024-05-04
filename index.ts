@@ -18,19 +18,20 @@ function hasTailwindHandler(plugin: Plugin) {
   return 'handler' in plugin && typeof plugin.handler === 'function';
 }
 function isTailwindPlugin(plugin: Plugin): plugin is TailwindPlugin {
-  if (hasTailwindHandler(plugin)) return true;
-  if (typeof plugin === 'function' && hasTailwindHandler(plugin({}))) return true;
-  return false;
+  const p = typeof plugin === 'function' ? plugin({}) : plugin;
+  return hasTailwindHandler(p);
 }
 
 // Turbine Plugin Type Guard
 function hasTurbineTransform(plugin: Plugin) {
   return 'transform' in plugin && typeof plugin.transform === 'function';
 }
+function hasTurbinePlugins(plugin: Plugin) {
+  return 'plugins' in plugin && Array.isArray(plugin.plugins) && plugin.plugins.every(isTailwindPlugin);
+}
 function isTurbinePlugin(plugin: Plugin): plugin is TurbinePlugin {
-  if (hasTurbineTransform(plugin)) return true;
-  if (typeof plugin === 'function' && hasTurbineTransform(plugin({}))) return true;
-  return false;
+  const p = typeof plugin === 'function' ? plugin({}) : plugin;
+  return hasTurbineTransform(p) || hasTurbinePlugins(p);
 }
 
 type NonNullableTheme = NonNullable<Config['theme']>;
