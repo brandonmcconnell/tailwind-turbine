@@ -119,3 +119,10 @@ export const resolve = <T, U>(value: ResolvableTo<T>, callback: (resolvedValue: 
   typeof value === 'function'
     ? (utils: PluginUtils<T>) => callback((value as ResolvableToFn<T>)(utils))
     : callback(value);
+
+const Turbine = {
+  build,
+  resolve,
+};
+
+export default Turbine;
