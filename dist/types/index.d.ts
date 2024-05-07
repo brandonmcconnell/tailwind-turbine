@@ -33,11 +33,4 @@ type ResolvableToFn<T> = Extract<ResolvableTo<T>, (...args: any[]) => any>;
 type ResolvableToParameters<T> = Parameters<ResolvableToFn<T>>;
 type PluginUtils<T> = ResolvableToParameters<T>[0];
 export declare const resolve: <T, U>(value: ResolvableTo<T>, callback: (resolvedValue: T) => U) => U | ((utils: PluginUtils<T>) => U);
-declare const Turbine: {
-    build: ({ config: CONFIG_RAW, plugins, }: {
-        config: Config;
-        plugins: Plugin[];
-    }) => NormalizedConfig;
-    resolve: <T, U>(value: ResolvableTo<T>, callback: (resolvedValue: T) => U) => U | ((utils: PluginUtils<T>) => U);
-};
-export default Turbine;
+export {};
