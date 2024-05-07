@@ -1,4 +1,5 @@
 import type { Config } from 'tailwindcss';
+import type { ResolvableTo } from 'tailwindcss/types/config.d.ts';
 import tailwindPlugin from 'tailwindcss/plugin.js';
 
 type PossiblyInvoked<T extends (...args: any[]) => any> = T | ReturnType<T>;
@@ -80,36 +81,41 @@ const normalizeConfig = (config: Config): NormalizedConfig => {
 };
 
 // Turbine Plugin Builder
-const Turbine = {
-  build({
-    config: CONFIG_RAW,
-    plugins,
-    // reporting, // Coming soon 👀
-  }: {
-    config: Config;
-    plugins: Plugin[];
-    // reporting?: boolean;
-  }) {
-    let i = 0;
-    let config = normalizeConfig(CONFIG_RAW);
-    for (const plugin of plugins) {
-      if (isTailwindPlugin(plugin)) {
-        config.plugins.push(plugin);
-      } else if (isTurbinePlugin(plugin)) {
-        const { transform, plugins } = typeof plugin === 'function' ? plugin() : plugin;
-        if (transform) {
-          config = transform(config);
-        }
-        if (plugins) {
-          config.plugins.push(...plugins);
-        }
-      } else {
-        throw new Error(`Invalid Turbine plugin at position ${i}, did not match Tailwind CSS or Turbine plugin.`);
+export const build = ({
+  config: CONFIG_RAW,
+  plugins,
+  // reporting, // Coming soon 👀
+}: {
+  config: Config;
+  plugins: Plugin[];
+  // reporting?: boolean;
+}) => {
+  let i = 0;
+  let config = normalizeConfig(CONFIG_RAW);
+  for (const plugin of plugins) {
+    if (isTailwindPlugin(plugin)) {
+      config.plugins.push(plugin);
+    } else if (isTurbinePlugin(plugin)) {
+      const { transform, plugins } = typeof plugin === 'function' ? plugin() : plugin;
+      if (transform) {
+        config = transform(config);
       }
-      i++;
+      if (plugins) {
+        config.plugins.push(...plugins);
+      }
+    } else {
+      throw new Error(`Invalid Turbine plugin at position ${i}, did not match Tailwind CSS or Turbine plugin.`);
     }
-    return config as NormalizedConfig;
-  },
+    i++;
+  }
+  return config as NormalizedConfig;
 };
 
-export default Turbine;
+type ResolvableToFn<T> = Extract<ResolvableTo<T>, (...args: any[]) => any>;
+type ResolvableToParameters<T> = Parameters<ResolvableToFn<T>>;
+type PluginUtils<T> = ResolvableToParameters<T>[0];
+
+export const resolve = <T, U>(value: ResolvableTo<T>, callback: (resolvedValue: T) => U) =>
+  typeof value === 'function'
+    ? (utils: PluginUtils<T>) => callback((value as ResolvableToFn<T>)(utils))
+    : callback(value);

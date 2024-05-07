@@ -1,4 +1,5 @@
 import type { Config } from 'tailwindcss';
+import type { ResolvableTo } from 'tailwindcss/types/config.d.ts';
 import tailwindPlugin from 'tailwindcss/plugin.js';
 type PossiblyInvoked<T extends (...args: any[]) => any> = T | ReturnType<T>;
 type TailwindPluginBase = typeof tailwindPlugin;
@@ -24,10 +25,12 @@ interface NormalizedConfig extends Config {
     theme: NormalizedTheme;
     plugins: NonNullable<Config['plugins']>;
 }
-declare const Turbine: {
-    build({ config: CONFIG_RAW, plugins, }: {
-        config: Config;
-        plugins: Plugin[];
-    }): NormalizedConfig;
-};
-export default Turbine;
+export declare const build: ({ config: CONFIG_RAW, plugins, }: {
+    config: Config;
+    plugins: Plugin[];
+}) => NormalizedConfig;
+type ResolvableToFn<T> = Extract<ResolvableTo<T>, (...args: any[]) => any>;
+type ResolvableToParameters<T> = Parameters<ResolvableToFn<T>>;
+type PluginUtils<T> = ResolvableToParameters<T>[0];
+export declare const resolve: <T, U>(value: ResolvableTo<T>, callback: (resolvedValue: T) => U) => U | ((utils: PluginUtils<T>) => U);
+export {};
