@@ -20,7 +20,7 @@ function hasTailwindHandler(plugin: Plugin) {
 }
 function isTailwindPlugin(plugin: Plugin): plugin is TailwindPlugin {
   const p = typeof plugin === 'function' ? plugin({}) : plugin;
-  return hasTailwindHandler(p);
+  return p && hasTailwindHandler(p);
 }
 
 // Turbine Plugin Type Guard
@@ -32,7 +32,7 @@ function hasTurbinePlugins(plugin: Plugin) {
 }
 function isTurbinePlugin(plugin: Plugin): plugin is TurbinePlugin {
   const p = typeof plugin === 'function' ? plugin({}) : plugin;
-  return hasTurbineTransform(p) || hasTurbinePlugins(p);
+  return p && (hasTurbineTransform(p) || hasTurbinePlugins(p));
 }
 
 type NonNullableTheme = NonNullable<Config['theme']>;
@@ -71,7 +71,7 @@ const normalizeConfig = (config: Partial<Config> | undefined = {}): NormalizedCo
     (!Array.isArray(config.content) && config.content.files.length === 0)
   ) {
     console.warn(
-      'No `content` property found in `config.content`. This may yield unexpected results, as your project files may not be scanned by Tailwind CSS.'
+      'Empty `content` or `content.files` value found in `config`. This may yield unexpected results, as your project files may not be scanned by Tailwind CSS.'
     );
   }
   config.content = {
@@ -115,7 +115,15 @@ export const build = ({
         config = transform(config);
       }
       if (plugins) {
-        config.plugins.push(...plugins);
+        config.plugins.push(
+          ...plugins.filter((plugin, j) => {
+            if (isTailwindPlugin(plugin)) return true;
+            console.warn(
+              `Invalid Tailwind CSS plugin found at position ${j} in Turbine plugin at position ${i}, skipping.`
+            );
+            return false;
+          })
+        );
       }
     } else {
       throw new Error(`Invalid Turbine plugin at position ${i}, did not match Tailwind CSS or Turbine plugin.`);
