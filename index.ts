@@ -48,6 +48,7 @@ interface NormalizedTheme extends NonNullableTheme {
 }
 
 interface NormalizedConfig extends Config {
+  content: NonNullable<Config['content']>;
   safelist: NonNullable<Config['safelist']>;
   blocklist: NonNullable<Config['blocklist']>;
   presets: NonNullable<Config['presets']>;
@@ -63,7 +64,20 @@ const createNormalizedThemeObject = (): NormalizedTheme => ({
   container: {},
 });
 
-const normalizeConfig = (config: Config): NormalizedConfig => {
+const normalizeConfig = (config: Partial<Config> | undefined = {}): NormalizedConfig => {
+  if (
+    !config.content ||
+    (Array.isArray(config.content) && config.content.length === 0) ||
+    (!Array.isArray(config.content) && config.content.files.length === 0)
+  ) {
+    console.warn(
+      'No `content` property found in `config.content`. This may yield unexpected results, as your project files may not be scanned by Tailwind CSS.'
+    );
+  }
+  config.content = {
+    files: Array.isArray(config.content) ? config.content : [],
+    ...(config.content && !Array.isArray(config.content) ? config.content : {}),
+  } satisfies NormalizedConfig['content'];
   config.safelist ??= [] satisfies NormalizedConfig['safelist'];
   config.blocklist ??= [] satisfies NormalizedConfig['blocklist'];
   config.presets ??= [] satisfies NormalizedConfig['presets'];
@@ -86,7 +100,7 @@ export const build = ({
   plugins,
   // reporting, // Coming soon 👀
 }: {
-  config: Config;
+  config: Partial<Config>;
   plugins: Plugin[];
   // reporting?: boolean;
 }) => {

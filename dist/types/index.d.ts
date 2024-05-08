@@ -19,6 +19,7 @@ interface NormalizedTheme extends NonNullableTheme {
     container: NonNullable<NonNullableTheme['container']>;
 }
 interface NormalizedConfig extends Config {
+    content: NonNullable<Config['content']>;
     safelist: NonNullable<Config['safelist']>;
     blocklist: NonNullable<Config['blocklist']>;
     presets: NonNullable<Config['presets']>;
@@ -26,7 +27,7 @@ interface NormalizedConfig extends Config {
     plugins: NonNullable<Config['plugins']>;
 }
 export declare const build: ({ config: CONFIG_RAW, plugins, }: {
-    config: Config;
+    config: Partial<Config>;
     plugins: Plugin[];
 }) => NormalizedConfig;
 type ResolvableToFn<T> = Extract<ResolvableTo<T>, (...args: any[]) => any>;
