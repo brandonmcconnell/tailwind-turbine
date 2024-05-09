@@ -140,12 +140,12 @@ type ResolvableToFn<T> = Extract<ResolvableTo<T>, (...args: any[]) => any>;
 type ResolvableToParameters<T> = Parameters<ResolvableToFn<T>>;
 type PluginUtils<T> = ResolvableToParameters<T>[0];
 
-export const resolvePluginUtils = <T, U>(value: ResolvableTo<T>, callback: (resolvedValue: T) => U) =>
+export const resolve = <T, U>(value: ResolvableTo<T>, callback: (resolvedValue: T) => U) =>
   typeof value === 'function'
     ? (utils: PluginUtils<T>) => callback((value as ResolvableToFn<T>)(utils))
     : callback(value);
 
-export const resolveThemeExtend = <Theme extends NormalizedTheme>(
+export const extend = <Theme extends NormalizedTheme>(
   theme: Theme,
   callback: (theme: Theme, isExtend: boolean) => unknown,
   createExtendIfMissing = false
