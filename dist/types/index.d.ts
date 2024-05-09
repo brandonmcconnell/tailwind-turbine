@@ -36,6 +36,6 @@ export declare const build: ({ config: CONFIG_RAW, plugins, }: {
 type ResolvableToFn<T> = Extract<ResolvableTo<T>, (...args: any[]) => any>;
 type ResolvableToParameters<T> = Parameters<ResolvableToFn<T>>;
 type PluginUtils<T> = ResolvableToParameters<T>[0];
-export declare const resolvePluginUtils: <T, U>(value: ResolvableTo<T>, callback: (resolvedValue: T) => U) => U | ((utils: PluginUtils<T>) => U);
-export declare const resolveThemeExtend: <Theme extends NormalizedTheme>(theme: Theme, callback: (theme: Theme, isExtend: boolean) => unknown, createExtendIfMissing?: boolean) => void;
+export declare const resolve: <T, U>(value: ResolvableTo<T>, callback: (resolvedValue: T) => U) => U | ((utils: PluginUtils<T>) => U);
+export declare const extend: <Theme extends NormalizedTheme>(theme: Theme, callback: (theme: Theme, isExtend: boolean) => unknown, createExtendIfMissing?: boolean) => void;
 export {};
