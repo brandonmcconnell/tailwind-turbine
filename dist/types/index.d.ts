@@ -18,12 +18,15 @@ interface NormalizedTheme extends NonNullableTheme {
     spacing: NonNullable<NonNullableTheme['spacing']>;
     container: NonNullable<NonNullableTheme['container']>;
 }
+interface NormalizedThemeWithExtend extends NormalizedTheme {
+    extend: NormalizedTheme;
+}
 interface NormalizedConfig extends Config {
     content: NonNullable<Config['content']>;
     safelist: NonNullable<Config['safelist']>;
     blocklist: NonNullable<Config['blocklist']>;
     presets: NonNullable<Config['presets']>;
-    theme: NormalizedTheme;
+    theme: NormalizedThemeWithExtend;
     plugins: NonNullable<Config['plugins']>;
 }
 export declare const build: ({ config: CONFIG_RAW, plugins, }: {
