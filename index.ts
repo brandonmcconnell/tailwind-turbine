@@ -147,8 +147,8 @@ export const resolvePluginUtils = <T, U>(value: ResolvableTo<T>, callback: (reso
 
 export const resolveThemeExtend = <Theme extends NormalizedTheme>(
   theme: Theme,
-  callback: (theme: Theme) => unknown
+  callback: (theme?: Theme, isExtend?: boolean) => unknown
 ) => {
-  callback(theme);
-  callback(theme.extend as Theme);
+  callback(theme, false);
+  callback(theme.extend as Theme, true);
 };
