@@ -47,12 +47,16 @@ interface NormalizedTheme extends NonNullableTheme {
   container: NonNullable<NonNullableTheme['container']>;
 }
 
+interface NormalizedThemeWithExtend extends NormalizedTheme {
+  extend: NormalizedTheme;
+}
+
 interface NormalizedConfig extends Config {
   content: NonNullable<Config['content']>;
   safelist: NonNullable<Config['safelist']>;
   blocklist: NonNullable<Config['blocklist']>;
   presets: NonNullable<Config['presets']>;
-  theme: NormalizedTheme;
+  theme: NormalizedThemeWithExtend;
   plugins: NonNullable<Config['plugins']>;
 }
 
@@ -87,8 +91,8 @@ const normalizeConfig = (config: Partial<Config> | undefined = {}): NormalizedCo
     extend: {
       ...createNormalizedThemeObject(),
       ...(config.theme?.extend ?? {}),
-    },
-  } satisfies NormalizedTheme & { extend: NormalizedTheme };
+    } satisfies NormalizedTheme,
+  } satisfies NormalizedThemeWithExtend;
   config.theme.extend ??= {} satisfies NormalizedConfig['theme']['extend'];
   config.plugins ??= [] satisfies NormalizedConfig['plugins'];
   return config as NormalizedConfig;
