@@ -148,10 +148,10 @@ export const resolvePluginUtils = <T, U>(value: ResolvableTo<T>, callback: (reso
 export const resolveThemeExtend = <Theme extends NormalizedTheme>(
   theme: Theme,
   callback: (theme: Theme, isExtend: boolean) => unknown,
-  preventExtendCreation = false
+  createExtendIfMissing = false
 ) => {
   callback(theme, false);
-  if (!preventExtendCreation) {
+  if (createExtendIfMissing) {
     if (!theme.extend) theme.extend = createNormalizedThemeObject() as NormalizedTheme;
   }
   if (theme.extend) {
