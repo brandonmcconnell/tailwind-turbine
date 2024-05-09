@@ -93,7 +93,6 @@ const normalizeConfig = (config: Partial<Config> | undefined = {}): NormalizedCo
       ...(config.theme?.extend ?? {}),
     } satisfies NormalizedTheme,
   } satisfies NormalizedThemeWithExtend;
-  config.theme.extend ??= {} satisfies NormalizedConfig['theme']['extend'];
   config.plugins ??= [] satisfies NormalizedConfig['plugins'];
   return config as NormalizedConfig;
 };
