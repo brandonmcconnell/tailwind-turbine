@@ -1,6 +1,6 @@
 {
   "name": "tailwind-turbine",
-  "version": "0.0.17",
+  "version": "0.0.18",
   "description": "Turbine is the original and ultimate Tailwind CSS config preprocessor, enabling the development and usage of plugins that effortlessly reach outside your `plugins` array with minimal effort.",
   "type": "module",
   "source": "index.ts",
