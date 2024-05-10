@@ -1,6 +1,7 @@
 import type { Config } from 'tailwindcss';
 import type { ResolvableTo } from 'tailwindcss/types/config.d.ts';
 import tailwindPlugin from 'tailwindcss/plugin.js';
+import defaultFullConfig from 'tailwindcss/stubs/config.full.js';
 
 type PossiblyInvoked<T extends (...args: any[]) => any> = T | ReturnType<T>;
 
@@ -68,7 +69,7 @@ const createNormalizedThemeObject = (): NormalizedTheme => ({
   container: {},
 });
 
-const normalizeConfig = (config: Partial<Config> | undefined = {}): NormalizedConfig => {
+const normalizeConfig = (config: Partial<Config> | undefined = {}, options: TurbineOptions): NormalizedConfig => {
   if (
     !config.content ||
     (Array.isArray(config.content) && config.content.length === 0) ||
@@ -85,6 +86,9 @@ const normalizeConfig = (config: Partial<Config> | undefined = {}): NormalizedCo
   config.safelist ??= [] satisfies NormalizedConfig['safelist'];
   config.blocklist ??= [] satisfies NormalizedConfig['blocklist'];
   config.presets ??= [] satisfies NormalizedConfig['presets'];
+  if (config.presets.length === 0 && options.defaultPreset) {
+    config.presets.push(defaultFullConfig as Config);
+  }
   config.theme = {
     ...createNormalizedThemeObject(),
     ...(config.theme ?? {}),
@@ -97,19 +101,31 @@ const normalizeConfig = (config: Partial<Config> | undefined = {}): NormalizedCo
   return config as NormalizedConfig;
 };
 
+interface TurbineOptions {
+  /** This value determines whether to fall back to the default Tailwind CSS preset when no presets are provided. */
+  defaultPreset: boolean;
+  // reporting: boolean; // coming soon 👀✨
+}
+
+const defaultTurbineOptions: TurbineOptions = {
+  defaultPreset: true,
+  // reporting: false,
+};
+
 // Turbine Plugin Builder
 export const build = ({
-  config: CONFIG_RAW,
+  config: userDefinedConfig,
   plugins,
-  // reporting, // Coming soon 👀
+  options: userDefinedOptions,
 }: {
   config: Partial<Config>;
-  plugins: Plugin[];
-  // reporting?: boolean;
+  plugins?: Plugin[];
+  options?: Partial<TurbineOptions>;
 }) => {
+  const options = { ...defaultTurbineOptions, ...(userDefinedOptions ?? {}) };
+  let config = normalizeConfig(userDefinedConfig, options);
   let i = 0;
-  let config = normalizeConfig(CONFIG_RAW);
-  for (const plugin of plugins) {
+  for (const plugin of plugins ?? []) {
     if (isTailwindPlugin(plugin)) {
       config.plugins.push(plugin);
     } else if (isTurbinePlugin(plugin)) {
