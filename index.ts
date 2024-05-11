@@ -87,7 +87,7 @@ const normalizeConfig = (config: Partial<Config> | undefined = {}, options: Turb
   config.blocklist ??= [] satisfies NormalizedConfig['blocklist'];
   config.presets ??= [] satisfies NormalizedConfig['presets'];
   if (config.presets.length === 0 && options.defaultPreset) {
-    config.presets.push(defaultFullConfig as Config);
+    config.presets.push(defaultFullConfig);
   }
   config.theme = {
     ...createNormalizedThemeObject(),

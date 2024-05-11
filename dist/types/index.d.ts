@@ -29,9 +29,14 @@ interface NormalizedConfig extends Config {
     theme: NormalizedThemeWithExtend;
     plugins: NonNullable<Config['plugins']>;
 }
-export declare const build: ({ config: CONFIG_RAW, plugins, }: {
+interface TurbineOptions {
+    /** This value determines whether to fall back to the default Tailwind CSS preset when no presets are provided. */
+    defaultPreset: boolean;
+}
+export declare const build: ({ config: userDefinedConfig, plugins, options: userDefinedOptions, }: {
     config: Partial<Config>;
-    plugins: Plugin[];
+    plugins?: Plugin[];
+    options?: Partial<TurbineOptions>;
 }) => NormalizedConfig;
 type ResolvableToFn<T> = Extract<ResolvableTo<T>, (...args: any[]) => any>;
 type ResolvableToParameters<T> = Parameters<ResolvableToFn<T>>;

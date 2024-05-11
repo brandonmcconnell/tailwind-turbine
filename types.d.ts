@@ -1,4 +1,4 @@
 declare module 'tailwindcss/stubs/config.full.js' {
-  const defaultFullConfig: any;
+  const defaultFullConfig: import('tailwindcss').Config;
   export = defaultFullConfig;
 }
